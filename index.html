@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MDPI 2026 学术运势抽签</title>
+    <style>
+        /* --- 基础样式 --- */
+        :root {
+            --mdpi-blue: #304CB2;
+            --cny-red: #D93025;
+            --gold: #FFD700;
+            --bg-color: #FFF5E6;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--cny-red);
+            background-image: radial-gradient(circle, #e64a40 10%, transparent 10%), radial-gradient(circle, #e64a40 10%, transparent 10%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px; /* 手机尺寸限制 */
+            height: 100%;
+            position: relative;
+            background: url('https://img.freepik.com/free-vector/chinese-new-year-pattern-background_53876-116392.jpg?w=740') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 遮罩层，增加文字可读性 */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* --- 首页元素 --- */
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            color: var(--mdpi-blue);
+            margin-top: 30px;
+            border: 2px solid var(--mdpi-blue);
+            padding: 5px 15px;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .title-box {
+            margin-top: 40px;
+        }
+
+        .main-title {
+            font-size: 32px;
+            color: var(--cny-red);
+            font-weight: 900;
+            text-shadow: 2px 2px 0px #fff;
+            margin-bottom: 10px;
+        }
+
+        .sub-title {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.5;
+            font-weight: bold;
+            padding: 0 20px;
+        }
+
+        .shaker-box {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .shaker-img {
+            font-size: 120px;
+            transition: transform 0.2s;
+        }
+
+        /* 摇动动画 */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-15deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .shaking {
+            animation: shake 0.5s infinite;
+        }
+
+        .btn-start {
+            background: var(--cny-red);
+            color: var(--gold);
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(217, 48, 37, 0.4);
+            margin-bottom: 50px;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- 结果页 (签文) --- */
+        .result-modal {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .card {
+            background: #fffbe8;
+            width: 80%;
+            max-width: 320px;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 4px solid var(--cny-red);
+            box-shadow: 0 0 20px var(--gold);
+            position: relative;
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .card-header {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .card-keyword {
+            font-size: 42px;
+            color: var(--cny-red);
+            font-weight: 900;
+            margin: 20px 0;
+            border-top: 2px dashed #ccc;
+            border-bottom: 2px dashed #ccc;
+            padding: 20px 0;
+        }
+
+        .card-desc {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-footer {
+            font-size: 12px;
+            color: var(--mdpi-blue);
+            font-weight: bold;
+        }
+
+        .btn-retry {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            font-size: 10px;
+            color: #999;
+            width: 100%;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="overlay"></div>
+    <div class="content">
+        <div class="logo">MDPI</div>
+        
+        <div class="title-box">
+            <div class="main-title">2026 乙巳马年</div>
+            <div class="sub-title">Paper 马到成功<br>拒稿马不停蹄 (滚蛋)</div>
+        </div>
+
+        <div class="shaker-box" id="shakerBox">
+            <!-- 这里用Emoji代替图片，实际开发可换成签筒图片 -->
+            <div class="shaker-img" id="shakerIcon">🧧</div>
+        </div>
+
+        <button class="btn-start" id="drawBtn">点击抽取学术签</button>
+        
+        <div class="copyright">© MDPI Editorial Office</div>
+    </div>
+</div>
+
+<!-- 结果弹窗 -->
+<div class="result-modal" id="resultModal">
+    <div class="card">
+        <div class="card-header">MDPI 2026 学术灵签</div>
+        <div class="card-keyword" id="fortuneTitle">上上签</div>
+        <div class="card-desc" id="fortuneText">
+            运势加载中...
+        </div>
+        <div class="card-footer">
+            MDPI 祝您马年科研腾飞
+        </div>
+    </div>
+    <button class="btn-retry" onclick="resetGame()">再抽一次</button>
+    <p style="color: #fff; font-size: 12px; margin-top: 10px;">长按截图保存好运</p>
+</div>
+
+<script>
+    // --- 签文数据库 (你可以修改这里的内容) ---
+    const fortunes = [
+        {
+            title: "直接接收",
+            desc: "审稿人对你的论文一见钟情，无需修改，直接 Accept！这运气简直是汗血宝马！"
+        },
+        {
+            title: "小修即过",
+            desc: "Reviewer 提出的意见如伯乐相马，稍加润色，文章立马身价倍增，Q1 在向你招手。"
+        },
+        {
+            title: "高被引",
+            desc: "你的文章将成为该领域的领头马，引用量一骑绝尘，ESI 高被引预定！"
+        },
+        {
+            title: "基金必中",
+            desc: "本子写得如有神助，评审专家频频点头，经费马上到账，实验室设备随便买。"
+        },
+        {
+            title: "灵感爆发",
+            desc: "实验数据完美闭环，写作思路万马奔腾，今年是你产出最高的一年。"
+        },
+        {
+            title: "拒稿滚蛋",
+            desc: "那些不懂你文章价值的拒稿信，都将马不停蹄地滚远。下一个投必中！"
+        },
+        {
+            title: "封面文章",
+            desc: "不仅文章被接收，还将登上期刊封面（Cover Story），颜值与实力并存的学术黑马！"
+        }
+    ];
+
+    const drawBtn = document.getElementById('drawBtn');
+    const shakerIcon = document.getElementById('shakerIcon');
+    const resultModal = document.getElementById('resultModal');
+    const fortuneTitle = document.getElementById('fortuneTitle');
+    const fortuneText = document.getElementById('fortuneText');
+
+    // 点击抽签
+    drawBtn.addEventListener('click', function() {
+        // 1. 播放摇动动画
+        shakerIcon.classList.add('shaking');
+        drawBtn.innerText = "正在求签...";
+        drawBtn.disabled = true;
+
+        // 2. 模拟延时 (1.5秒后出结果)
+        setTimeout(() => {
+            showResult();
+        }, 1500);
+    });
+
+    function showResult() {
+        // 停止动画
+        shakerIcon.classList.remove('shaking');
+        
+        // 随机抽取一个签
+        const randomIndex = Math.floor(Math.random() * fortunes.length);
+        const luckyFortune = fortunes[randomIndex];
+
+        // 填充内容
+        fortuneTitle.innerText = luckyFortune.title;
+        fortuneText.innerText = luckyFortune.desc;
+
+        // 显示弹窗
+        resultModal.style.display = 'flex';
+    }
+
+    function resetGame() {
+        resultModal.style.display = 'none';
+        drawBtn.innerText = "点击抽取学术签";
+        drawBtn.disabled = false;
+    }
+</script>
+
+</body>
+</html>
