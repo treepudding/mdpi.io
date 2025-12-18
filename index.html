@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>流年财运</title>
+    <title>ASTRO-QUANT | 全息流年财运终端 (Glass)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ECharts -->
@@ -11,7 +11,7 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syncopate:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -19,18 +19,33 @@
                 extend: {
                     colors: {
                         brand: {
-                            dark: '#0B0518',
-                            purple: '#6D28D9',
-                            neon: '#A855F7',
-                            accent: '#00FFA3', // Green for Up
-                            danger: '#FF2E63', // Red for Down
-                            surface: '#1E1433'
+                            primary: '#7C3AED', // Violet 600
+                            secondary: '#8B5CF6', // Violet 500
+                            accent: '#10B981', // Emerald 500
+                            danger: '#EF4444', // Red 500
+                            dark: '#1E293B', // Slate 800
                         }
                     },
                     fontFamily: {
                         mono: ['"JetBrains Mono"', 'monospace'],
-                        display: ['"Orbitron"', 'sans-serif'],
+                        display: ['"Syncopate"', 'sans-serif'],
                         body: ['"Noto Sans SC"', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'scan': 'scan 2s linear infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                        },
+                        scan: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        }
                     }
                 }
             }
@@ -38,420 +53,560 @@
     </script>
     <style>
         body {
-            background-color: #0B0518;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(109, 40, 217, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 163, 0.05) 0%, transparent 40%);
-            color: #E2E8F0;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            overflow-x: hidden;
+            font-family: 'Noto Sans SC', sans-serif;
         }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0B0518; }
-        ::-webkit-scrollbar-thumb { background: #4C1D95; border-radius: 4px; }
 
+        /* Animated Background Blobs */
+        .bg-gradient-blob {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: #F8FAFC;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: blob 15s infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #DDD6FE; animation-delay: 0s; }
+        .blob-2 { top: 20%; right: -10%; width: 400px; height: 400px; background: #E9D5FF; animation-delay: 2s; }
+        .blob-3 { bottom: -10%; left: 20%; width: 600px; height: 600px; background: #F3E8FF; animation-delay: 4s; }
+
+        /* Ultra Glassmorphism */
         .glass-panel {
-            background: rgba(30, 20, 51, 0.6);
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.02), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.02),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .neon-text {
-            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
-        }
-
-        .input-field {
-            background: rgba(11, 5, 24, 0.8);
-            border: 1px solid #4C1D95;
-            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
+            border-radius: 16px;
             transition: all 0.3s ease;
         }
-        .input-field:focus {
-            border-color: #A855F7;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Input Styles */
+        .input-glass {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(203, 213, 225, 0.6);
+            color: #1E293B;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s;
+        }
+        .input-glass:focus {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
             outline: none;
         }
 
+        /* Button */
         .btn-primary {
-            background: linear-gradient(135deg, #6D28D9 0%, #9333EA 100%);
+            background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
             position: relative;
             overflow: hidden;
         }
         .btn-primary::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%);
         }
         .btn-primary:hover::after {
-            left: 100%;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 20px rgba(147, 51, 234, 0.6);
+            animation: scan 1s forwards;
         }
 
-        /* Loading Animation */
-        .loader {
-            border: 3px solid rgba(168, 85, 247, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid #A855F7;
-            width: 24px;
-            height: 24px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        /* Loader */
+        .loader-bar {
+            height: 4px;
+            width: 100%;
+            background: #E2E8F0;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; height: 100%; width: 30%;
+            background: #7C3AED;
+            animation: move 1.5s infinite ease-in-out;
+            border-radius: 2px;
+        }
+        @keyframes move {
+            0% { left: -30%; }
+            100% { left: 100%; }
         }
     </style>
 </head>
-<body class="font-body min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col items-center">
 
-    <!-- Header -->
-    <header class="w-full py-6 px-4 border-b border-purple-900/30 flex justify-between items-center glass-panel sticky top-0 z-50">
+    <!-- Background Animation -->
+    <div class="bg-gradient-blob">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="w-full h-16 glass-panel !rounded-none !border-x-0 !border-t-0 fixed top-0 z-50 flex items-center justify-between px-6 md:px-12">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded bg-gradient-to-br from-brand-purple to-brand-accent flex items-center justify-center text-white font-bold text-xl">
+            <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/30 text-white">
                 <i class="fa-solid fa-infinity"></i>
             </div>
-            <div>
-                <h1 class="font-display text-2xl tracking-wider text-white neon-text">ASTRAL <span class="text-brand-neon">WEALTH</span></h1>
-                <p class="text-xs text-gray-400 font-mono tracking-widest">AI-POWERED DESTINY ANALYTICS</p>
+            <span class="font-display font-bold text-lg tracking-widest text-slate-800">ASTRO<span class="text-brand-primary">QUANT</span></span>
+        </div>
+        <div class="text-xs font-mono text-slate-500 bg-white/50 px-3 py-1 rounded-full border border-white/60">
+            BETA V.2.1
+        </div>
+    </nav>
+
+    <main class="w-full max-w-6xl px-4 pt-28 pb-20 flex flex-col gap-8 z-10">
+        
+        <!-- 1. Input Section -->
+        <section class="glass-panel p-8 md:p-10 relative overflow-hidden transition-all duration-500" id="input-section">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-slate-200/60 pb-6">
+                <div>
+                    <h1 class="text-3xl font-display text-slate-900 mb-2">DESTINY <span class="text-brand-primary">ALGORITHM</span></h1>
+                    <p class="text-slate-500 font-mono text-sm">输入出生信息，AI将为您生成0-100岁全息财运K线</p>
+                </div>
             </div>
-        </div>
-        <div class="hidden md:flex gap-4 text-xs font-mono text-brand-accent">
-            <span><i class="fa-solid fa-circle-nodes"></i> BAZI ENGINE: ONLINE</span>
-            <span><i class="fa-solid fa-star"></i> ASTRO NODE: CONNECTED</span>
-        </div>
-    </header>
 
-    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col gap-8">
-
-        <!-- Input Section -->
-        <section id="input-section" class="glass-panel rounded-2xl p-8 max-w-4xl mx-auto w-full transition-all duration-500">
-            <h2 class="text-xl font-display mb-6 text-brand-neon border-l-4 border-brand-accent pl-3">INITIALIZE PROFILE</h2>
-            
-            <form id="destiny-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs text-gray-400 font-mono uppercase">Date of Birth</label>
-                    <input type="date" id="dob" value="2000-01-03" class="input-field rounded-lg p-3 w-full">
+            <form id="calc-form" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Date of Birth</label>
+                    <input type="date" id="dob" value="2000-01-03" class="input-glass w-full p-3.5 rounded-xl text-sm font-medium">
                 </div>
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs text-gray-400 font-mono uppercase">Time</label>
-                    <input type="time" id="tob" value="14:54" class="input-field rounded-lg p-3 w-full">
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Time</label>
+                    <input type="time" id="tob" value="14:54" class="input-glass w-full p-3.5 rounded-xl text-sm font-medium">
                 </div>
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs text-gray-400 font-mono uppercase">Birth Place</label>
-                    <input type="text" id="city" value="Los Angeles, USA" placeholder="City, Country" class="input-field rounded-lg p-3 w-full">
+                <div class="md:col-span-4">
+                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Birth Place</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-location-dot absolute left-4 top-4 text-slate-400 text-xs"></i>
+                        <input type="text" id="place" value="Los Angeles, USA" class="input-glass w-full p-3.5 pl-10 rounded-xl text-sm font-medium">
+                    </div>
                 </div>
-                <div class="flex items-end">
-                    <button type="submit" class="btn-primary w-full py-3 rounded-lg font-bold text-white tracking-wider flex items-center justify-center gap-2">
-                        <span id="btn-text">GENERATE ALPHA</span>
-                        <div id="btn-loader" class="loader hidden"></div>
+                <div class="md:col-span-3 flex items-end">
+                    <button type="submit" id="btn-submit" class="btn-primary w-full py-3.5 rounded-xl font-display font-bold text-white tracking-widest text-sm transition-transform active:scale-95 flex justify-center items-center gap-2">
+                        <span>GENERATE ALPHA</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
             </form>
+            
+            <div id="loader" class="hidden mt-8">
+                <div class="flex justify-between text-xs font-mono text-brand-primary mb-2">
+                    <span>CALCULATING PLANETARY TRANSITS...</span>
+                    <span id="loader-percent">0%</span>
+                </div>
+                <div class="loader-bar"></div>
+            </div>
         </section>
 
-        <!-- Results Section (Hidden by default) -->
-        <div id="result-container" class="hidden flex flex-col gap-6 opacity-0 transition-opacity duration-1000">
+        <!-- 2. Results Section -->
+        <div id="results-container" class="hidden flex flex-col gap-6 transition-all duration-700 transform translate-y-10 opacity-0">
             
-            <!-- Chart Container -->
-            <section class="glass-panel rounded-2xl p-1 relative overflow-hidden">
-                <div class="absolute top-4 left-4 z-10 bg-black/50 px-3 py-1 rounded border border-purple-500/30">
-                    <span class="text-xs font-mono text-brand-accent">LIFETIME WEALTH INDEX (0-100Y)</span>
+            <!-- Chart Panel -->
+            <section class="glass-panel p-2">
+                <div class="bg-white/40 rounded-[20px] p-4 md:p-6">
+                    <div class="flex justify-between items-center mb-4 px-2">
+                        <div class="flex gap-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-brand-accent"></div>
+                                <span class="text-xs font-bold text-slate-600">WEALTH INDEX</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-brand-secondary opacity-50"></div>
+                                <span class="text-xs font-bold text-slate-600">MA5 TREND</span>
+                            </div>
+                        </div>
+                        <div class="text-xs font-mono text-slate-400">TIMEFRAME: 100Y</div>
+                    </div>
+                    <div id="kline-chart" class="w-full h-[400px] md:h-[500px]"></div>
                 </div>
-                <!-- EChart Instance -->
-                <div id="kline-chart" class="w-full h-[400px] md:h-[500px]"></div>
             </section>
 
-            <!-- Detail Card -->
-            <section id="detail-card" class="glass-panel rounded-2xl p-0 overflow-hidden border-t-4 border-brand-accent transition-all duration-300 transform hover:-translate-y-1">
-                <div class="bg-brand-surface p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Detailed Analysis Panel -->
+            <section id="detail-card" class="glass-panel overflow-hidden transition-all duration-300">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-slate-200/60">
                     
                     <!-- Left: Score & Status -->
-                    <div class="lg:col-span-1 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-purple-900/50 pb-6 lg:pb-0 lg:pr-6">
+                    <div class="lg:col-span-3 p-8 bg-white/20 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-baseline mb-2">
-                                <h3 class="text-4xl font-display text-white" id="card-year">2025</h3>
-                                <span class="text-xl font-mono text-gray-400" id="card-age">Age 25</span>
+                            <!-- MODIFIED: Increased gap and adjusted alignment -->
+                            <div class="flex flex-col mb-4">
+                                <h2 class="text-6xl font-display text-slate-800 tracking-tighter leading-none" id="card-year">2024</h2>
+                                <div class="mt-3 flex items-center gap-2">
+                                    <span class="text-sm font-mono text-slate-400 uppercase tracking-widest">Age</span>
+                                    <span class="text-xl font-mono font-medium text-brand-primary" id="card-age">24岁</span>
+                                </div>
                             </div>
-                            <div class="inline-block px-4 py-1 rounded-full bg-purple-900/50 border border-purple-500/50 text-sm font-bold text-brand-neon mb-6">
-                                <i class="fa-solid fa-bolt mr-2"></i><span id="card-luck-level">HOLD</span>
+                            <div id="card-luck-badge" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200 mb-8 w-fit">
+                                --
                             </div>
                         </div>
                         
-                        <div class="space-y-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-500">Wealth Score</span>
-                                <span class="font-mono text-brand-accent" id="card-score">78.4</span>
+                        <div class="space-y-3">
+                            <div class="glass-card p-4 flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Score</span>
+                                <span id="card-score" class="font-mono font-bold text-brand-primary text-xl">--</span>
                             </div>
-                            <div class="w-full bg-gray-800 rounded-full h-2">
-                                <div id="score-bar" class="bg-brand-accent h-2 rounded-full" style="width: 78%"></div>
-                            </div>
-                            <div class="flex justify-between text-sm mt-4">
-                                <span class="text-gray-500">Volatility</span>
-                                <span class="font-mono text-brand-danger">HIGH</span>
+                            <div class="glass-card p-4 flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Trend</span>
+                                <span id="card-trend-icon">--</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Middle: Analysis -->
-                    <div class="lg:col-span-2 flex flex-col gap-6">
+                    <!-- Center: AI Analysis -->
+                    <div class="lg:col-span-6 p-8 bg-white/30 flex flex-col gap-6">
                         <div>
-                            <h4 class="text-xs font-mono text-brand-neon mb-3 uppercase tracking-widest">/// Astral & BaZi Cross-Analysis</h4>
-                            <p class="text-gray-300 leading-relaxed text-sm md:text-base" id="card-analysis">
-                                点击图表上的K线以查看详细分析。
-                            </p>
-                        </div>
-
-                        <!-- Recommendations -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-black/20 p-4 rounded-lg border border-purple-500/20">
-                                <h5 class="text-xs text-gray-400 mb-2 font-mono"><i class="fa-solid fa-layer-group mr-1"></i> LUCKY SECTORS</h5>
-                                <div class="flex flex-wrap gap-2" id="card-sectors">
-                                    <span class="px-2 py-1 bg-purple-900/40 rounded text-xs text-purple-300">Tech</span>
+                            <div class="flex items-center gap-2 mb-5">
+                                <div class="w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary text-xs">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <h3 class="text-sm font-bold text-slate-800 tracking-wide">AI HYBRID ANALYSIS</h3>
+                            </div>
+                            
+                            <div class="space-y-5 text-sm leading-relaxed text-slate-600">
+                                <div class="relative pl-5 border-l-2 border-brand-primary">
+                                    <span class="text-[10px] font-bold text-brand-primary uppercase tracking-wider block mb-1.5 opacity-80">Metaphysics (BaZi)</span>
+                                    <p id="txt-bazi" class="text-slate-700">...</p>
+                                </div>
+                                <div class="relative pl-5 border-l-2 border-blue-400">
+                                    <span class="text-[10px] font-bold text-blue-500 uppercase tracking-wider block mb-1.5 opacity-80">Astrology</span>
+                                    <p id="txt-astro" class="text-slate-700">...</p>
+                                </div>
+                                <div class="relative pl-5 border-l-2 border-brand-accent">
+                                    <span class="text-[10px] font-bold text-brand-accent uppercase tracking-wider block mb-1.5 opacity-80">Synthesis</span>
+                                    <p id="txt-synthesis" class="text-slate-900 font-bold">...</p>
                                 </div>
                             </div>
-                            <div class="bg-black/20 p-4 rounded-lg border border-purple-500/20">
-                                <h5 class="text-xs text-gray-400 mb-2 font-mono"><i class="fa-solid fa-arrow-trend-up mr-1"></i> WATCHLIST (TOP 100)</h5>
-                                <div class="flex flex-wrap gap-2" id="card-stocks">
-                                    <span class="font-mono text-brand-accent">NVDA</span>
-                                </div>
+                        </div>
+
+                        <!-- Seasonal Grid -->
+                        <div class="grid grid-cols-4 gap-3 mt-auto">
+                            <div class="glass-card p-3 text-center group hover:bg-white/60 transition-colors">
+                                <div class="text-[10px] font-bold text-green-600 mb-1 opacity-70 group-hover:opacity-100">SPRING</div>
+                                <div id="advice-spring" class="text-xs text-slate-600 font-medium">--</div>
+                            </div>
+                            <div class="glass-card p-3 text-center group hover:bg-white/60 transition-colors">
+                                <div class="text-[10px] font-bold text-red-500 mb-1 opacity-70 group-hover:opacity-100">SUMMER</div>
+                                <div id="advice-summer" class="text-xs text-slate-600 font-medium">--</div>
+                            </div>
+                            <div class="glass-card p-3 text-center group hover:bg-white/60 transition-colors">
+                                <div class="text-[10px] font-bold text-yellow-600 mb-1 opacity-70 group-hover:opacity-100">AUTUMN</div>
+                                <div id="advice-autumn" class="text-xs text-slate-600 font-medium">--</div>
+                            </div>
+                            <div class="glass-card p-3 text-center group hover:bg-white/60 transition-colors">
+                                <div class="text-[10px] font-bold text-blue-500 mb-1 opacity-70 group-hover:opacity-100">WINTER</div>
+                                <div id="advice-winter" class="text-xs text-slate-600 font-medium">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Actionable -->
+                    <div class="lg:col-span-3 p-8 bg-white/20 flex flex-col gap-6">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-brand-secondary"></i> Alpha Sectors
+                            </h3>
+                            <div id="card-sectors" class="flex flex-wrap gap-2">
+                                <!-- Tags -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-trend-up text-brand-accent"></i> US100 Picks
+                            </h3>
+                            <div class="glass-card p-4 bg-white/40">
+                                <ul id="card-stocks" class="space-y-3 font-mono text-sm">
+                                    <!-- Stocks -->
+                                </ul>
                             </div>
                         </div>
                         
-                        <div class="mt-auto pt-4 border-t border-white/5">
-                            <p class="text-[10px] text-gray-600 font-mono">
-                                * DISCLAIMER: AI GENERATED CONTENT FOR ENTERTAINMENT ONLY. NOT FINANCIAL ADVICE.
-                            </p>
+                        <div class="mt-auto pt-4 border-t border-slate-200/50">
+                             <p class="text-[10px] text-slate-400 text-center leading-relaxed">
+                                <i class="fa-solid fa-circle-info mr-1"></i>
+                                Not Financial Advice.<br>AI Generated Content.
+                             </p>
                         </div>
                     </div>
                 </div>
             </section>
+
         </div>
     </main>
 
     <script>
-        // --- Configuration & Mock Data ---
-        const STOCK_TICKERS = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'TSLA', 'META', 'BRK.B', 'LLY', 'V', 'TSM', 'AVGO', 'JPM', 'WMT', 'XOM', 'MA', 'UNH', 'PG', 'JNJ', 'ORCL'];
-        const SECTORS = ['AI Hardware', 'SaaS', 'Biotech', 'Renewable Energy', 'Fintech', 'Consumer Cyclical', 'Semiconductors', 'Quantum Computing', 'Space Tech'];
-        
-        // Mock Phrases for "AI" Analysis
-        const BAZI_TERMS = [
-            "流年偏财坐禄，财星高照。", "七杀攻身，需防投资陷阱。", "食神生财，利于创意变现。", 
-            "比肩夺财，合作需谨慎。", "正财合身，薪资稳步增长。", "冲太岁之年，动荡中求财。",
-            "财库大开，利于资产配置。", "印星护身，贵人运强。", "伤官见官，易有财务纠纷。"
-        ];
-        const ASTRO_TERMS = [
-            "木星进入第二宫，财富扩张。", "土星刑克金星，现金流紧缩。", "天王星三分相，意外之财。",
-            "水星逆行影响判断，避免大额交易。", "冥王星过境，资产结构重组。", "金星回归，利于艺术投资。",
-            "火星激发搞钱动力，执行力强。", "海王星带来模糊信息，警惕诈骗。"
-        ];
+        // --- Data & Logic ---
+        const LUCK_LEVELS = {
+            GREAT_GOOD: { label: "大吉 GREAT LUCK", color: "#065F46", bg: "#D1FAE5", border: "#34D399" },
+            GOOD: { label: "吉 GOOD", color: "#047857", bg: "#ECFDF5", border: "#6EE7B7" },
+            AVG: { label: "平 AVERAGE", color: "#475569", bg: "#F1F5F9", border: "#CBD5E1" },
+            BAD: { label: "凶 OMINOUS", color: "#991B1B", bg: "#FEE2E2", border: "#FCA5A5" },
+            GREAT_BAD: { label: "大凶 GREAT OMINOUS", color: "#7F1D1D", bg: "#FEF2F2", border: "#F87171" }
+        };
 
-        let chartInstance = null;
-        let generatedData = [];
+        const BAZI_LOGIC = [
+            "流年天干透出偏财，地支三合财局，财星根气深厚。",
+            "大运与流年天克地冲，财库受损，比肩劫财夺势。",
+            "食神生财格成，智慧生财，利于技术变现或创新。",
+            "官杀混杂，压力转化为动力，险中求财之象。",
+            "正印护身，贵人运强，适合稳健理财，不宜激进。"
+        ];
+        const ASTRO_LOGIC = [
+            "木星进入第二宫（财帛宫），带来扩张性的财富机遇。",
+            "土星回归刑克本命金星，财务紧缩，需通过纪律积累财富。",
+            "天王星三分相，预示着意外之财或通过科技领域获利。",
+            "海王星对冲，财务状况模糊不清，警惕诈骗或过度理想化。",
+            "冥王星过境，资产结构面临彻底重组，置之死地而后生。"
+        ];
+        const SEASONAL_ADVICE = {
+            up: ["布局", "加仓", "止盈", "冬藏"],
+            down: ["观望", "防御", "止损", "学习"],
+            flat: ["调研", "定投", "持仓", "等待"]
+        };
+        const STOCKS_POOL = [
+            { t: "NVDA", n: "NVIDIA" }, { t: "AAPL", n: "Apple" }, { t: "MSFT", n: "Microsoft" }, 
+            { t: "TSLA", n: "Tesla" }, { t: "COIN", n: "Coinbase" }, { t: "PLTR", n: "Palantir" }
+        ];
+        const SECTORS = ["AI Infra", "Quantum", "Biotech", "Green Energy", "DeFi", "Space Tech"];
 
-        // --- Core Logic: Generate 0-100 Year Data ---
-        function generateDestinyData(birthYear) {
-            const data = [];
-            let currentPrice = 50; // Starting "Luck Index"
-            
+        function generateLifeData(startYear) {
+            let data = [];
+            let price = 50; 
             for (let i = 0; i <= 100; i++) {
-                const year = birthYear + i;
-                const age = i;
+                let year = startYear + i;
+                let age = i;
+                let vol = (age > 20 && age < 55) ? 15 : (age >= 55 ? 8 : 4);
+                let change = (Math.random() - 0.5) * vol + Math.sin(age/10)*2;
+                let open = price;
+                let close = Math.max(10, Math.min(150, price + change));
+                let high = Math.max(open, close) + Math.random() * (vol/2);
+                let low = Math.min(open, close) - Math.random() * (vol/2);
                 
-                // Simulate K-line data (Open, Close, Low, High)
-                // Volatility based on age (young/old less volatile, middle age high volatility)
-                const volatility = (age > 20 && age < 60) ? 15 : 8; 
-                
-                const change = (Math.random() - 0.5) * volatility;
-                const open = currentPrice;
-                const close = currentPrice + change;
-                
-                // Ensure values don't go below 0 or too high
-                const finalClose = Math.max(10, Math.min(150, close));
-                
-                const low = Math.min(open, finalClose) - Math.random() * 5;
-                const high = Math.max(open, finalClose) + Math.random() * 5;
-                
-                // Determine Luck Level
-                const diff = finalClose - open;
-                let level = "平";
-                let levelClass = "text-gray-400";
-                
-                if (diff > 5) { level = "大吉 (Big Auspicious)"; levelClass = "text-brand-accent"; }
-                else if (diff > 0) { level = "吉 (Auspicious)"; levelClass = "text-green-300"; }
-                else if (diff < -5) { level = "大凶 (Big Ominous)"; levelClass = "text-brand-danger"; }
-                else { level = "凶 (Ominous)"; levelClass = "text-red-300"; }
+                let diff = close - open;
+                let percent = (diff / open) * 100;
+                let status = LUCK_LEVELS.AVG;
+                if (percent > 5) status = LUCK_LEVELS.GREAT_GOOD;
+                else if (percent > 1) status = LUCK_LEVELS.GOOD;
+                else if (percent < -5) status = LUCK_LEVELS.GREAT_BAD;
+                else if (percent < -1) status = LUCK_LEVELS.BAD;
 
-                // Generate Text
-                const baziTxt = BAZI_TERMS[Math.floor(Math.random() * BAZI_TERMS.length)];
-                const astroTxt = ASTRO_TERMS[Math.floor(Math.random() * ASTRO_TERMS.length)];
-                const analysis = `【${year}年 运势分析】本年${baziTxt} 西方占星显示${astroTxt} 整体能量场${diff > 0 ? '向上共振' : '受到压制'}。建议${diff > 0 ? '积极进取，扩大战果' : '保守防御，现金为王'}。`;
+                let synthesis = diff > 0 ? "【吉】能量共振，确立本年为财富扩张期。" : (diff < 0 ? "【凶】能量受阻，本年核心策略为保本。" : "【平】能量平衡，适合长线布局。");
+                let seasons = diff > 0 ? SEASONAL_ADVICE.up : (diff < 0 ? SEASONAL_ADVICE.down : SEASONAL_ADVICE.flat);
 
-                // Pick Stocks
-                const dailyStocks = [];
-                for(let k=0; k<3; k++) dailyStocks.push(STOCK_TICKERS[Math.floor(Math.random() * STOCK_TICKERS.length)]);
+                let dailyStocks = [];
+                for(let k=0; k<3; k++) dailyStocks.push(STOCKS_POOL[Math.floor(Math.random() * STOCKS_POOL.length)]);
                 
-                // Pick Sector
-                const dailySector = SECTORS[Math.floor(Math.random() * SECTORS.length)];
-
                 data.push({
-                    year,
-                    age,
-                    values: [open.toFixed(2), finalClose.toFixed(2), low.toFixed(2), high.toFixed(2)], // ECharts format: [Open, Close, Low, High]
-                    level,
-                    levelClass,
-                    analysis,
-                    stocks: [...new Set(dailyStocks)], // Remove duplicates
-                    sector: dailySector,
-                    score: finalClose.toFixed(1)
+                    year, age, values: [open.toFixed(2), close.toFixed(2), low.toFixed(2), high.toFixed(2)],
+                    status, baziTxt: BAZI_LOGIC[Math.floor(Math.random()*BAZI_LOGIC.length)], 
+                    astroTxt: ASTRO_LOGIC[Math.floor(Math.random()*ASTRO_LOGIC.length)], 
+                    synthesis, seasons, stocks: [...new Set(dailyStocks)], 
+                    sectors: [SECTORS[Math.floor(Math.random()*SECTORS.length)], SECTORS[Math.floor(Math.random()*SECTORS.length)]],
+                    score: close.toFixed(1)
                 });
-
-                currentPrice = finalClose;
+                price = close;
             }
             return data;
         }
 
-        // --- Chart Rendering ---
+        // --- UI Interactions ---
+        let myChart = null;
+
+        document.getElementById('calc-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results-container');
+            const inputSection = document.getElementById('input-section');
+
+            // 1. UI State: Loading
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> PROCESSING';
+            loader.classList.remove('hidden');
+            
+            // Simulate Progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 10) + 5;
+                if(progress > 100) progress = 100;
+                document.getElementById('loader-percent').innerText = progress + '%';
+            }, 150);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                const dob = new Date(document.getElementById('dob').value);
+                const data = generateLifeData(dob.getFullYear());
+                
+                // 2. UI State: Complete
+                loader.classList.add('hidden');
+                btn.innerHTML = 'RE-GENERATE';
+                btn.disabled = false;
+                
+                // 3. Show Results
+                results.classList.remove('hidden');
+                // Trigger animation
+                setTimeout(() => {
+                    results.classList.remove('translate-y-10', 'opacity-0');
+                    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+
+                initChart(data);
+
+            }, 2000);
+        });
+
         function initChart(data) {
             const chartDom = document.getElementById('kline-chart');
-            if (chartInstance) chartInstance.dispose();
-            chartInstance = echarts.init(chartDom);
+            if (myChart) myChart.dispose();
+            myChart = echarts.init(chartDom);
 
-            const dates = data.map(item => `${item.year} (Age ${item.age})`);
+            const dates = data.map(item => item.year);
             const values = data.map(item => item.values);
+
+            // MA Calculation
+            function calculateMA(dayCount) {
+                var result = [];
+                for (var i = 0, len = values.length; i < len; i++) {
+                    if (i < dayCount) { result.push('-'); continue; }
+                    var sum = 0;
+                    for (var j = 0; j < dayCount; j++) { sum += +values[i - j][1]; }
+                    result.push((sum / dayCount).toFixed(2));
+                }
+                return result;
+            }
 
             const option = {
                 backgroundColor: 'transparent',
                 tooltip: {
                     trigger: 'axis',
-                    axisPointer: { type: 'cross' },
-                    backgroundColor: 'rgba(11, 5, 24, 0.9)',
-                    borderColor: '#6D28D9',
-                    textStyle: { color: '#fff' }
+                    axisPointer: { type: 'cross', label: { backgroundColor: '#7C3AED' } },
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    borderColor: '#E2E8F0',
+                    textStyle: { color: '#1E293B' },
+                    formatter: (params) => {
+                        const p = params[0];
+                        const item = data[p.dataIndex];
+                        return `<div class="font-bold mb-1">${item.year} (Age ${item.age})</div>
+                                <div class="text-xs">Index: ${p.data[2]}</div>`;
+                    }
                 },
-                grid: {
-                    left: '3%', right: '3%', bottom: '10%', top: '5%', containLabel: true
-                },
+                grid: { left: '0%', right: '0%', bottom: '10%', top: '5%', containLabel: true },
                 xAxis: {
                     data: dates,
-                    axisLine: { lineStyle: { color: '#4C1D95' } },
+                    axisLine: { show: false },
+                    axisTick: { show: false },
                     axisLabel: { color: '#94A3B8', fontFamily: 'JetBrains Mono' }
                 },
                 yAxis: {
                     scale: true,
-                    splitLine: { lineStyle: { color: 'rgba(76, 29, 149, 0.2)' } },
+                    splitLine: { lineStyle: { color: '#F1F5F9' } },
                     axisLabel: { color: '#94A3B8', fontFamily: 'JetBrains Mono' }
                 },
-                dataZoom: [
-                    { type: 'inside', start: 0, end: 30 }, // Default zoom to first 30 years
-                    { type: 'slider', show: true, bottom: 0, borderColor: '#4C1D95', fillerColor: 'rgba(168, 85, 247, 0.2)' }
-                ],
+                dataZoom: [{ type: 'inside', start: 0, end: 30 }, { type: 'slider', bottom: 0, height: 20, borderColor: 'transparent', fillerColor: 'rgba(124, 58, 237, 0.1)', handleStyle: {color: '#7C3AED'} }],
                 series: [
                     {
                         type: 'candlestick',
                         data: values,
                         itemStyle: {
-                            color: '#00FFA3', // Up color (Green)
-                            color0: '#FF2E63', // Down color (Red)
-                            borderColor: '#00FFA3',
-                            borderColor0: '#FF2E63'
+                            color: '#10B981', color0: '#EF4444',
+                            borderColor: '#10B981', borderColor0: '#EF4444'
                         },
                         barWidth: '60%'
+                    },
+                    {
+                        name: 'MA5', type: 'line', data: calculateMA(5),
+                        smooth: true, showSymbol: false,
+                        lineStyle: { width: 2, color: '#8B5CF6', opacity: 0.5 }
                     }
                 ]
             };
 
-            chartInstance.setOption(option);
-
-            // Click Event
-            chartInstance.on('click', function (params) {
-                const index = params.dataIndex;
-                updateCard(data[index]);
-            });
-            
-            // Auto update to first year
+            myChart.setOption(option);
+            myChart.on('click', (params) => updateCard(data[params.dataIndex]));
             updateCard(data[0]);
         }
 
-        // --- Update Card UI ---
         function updateCard(item) {
             const card = document.getElementById('detail-card');
-            
-            // Animate refresh
-            card.classList.add('opacity-50');
-            setTimeout(() => card.classList.remove('opacity-50'), 200);
+            // Subtle flash effect
+            card.classList.add('bg-white/40');
+            setTimeout(() => card.classList.remove('bg-white/40'), 200);
 
             document.getElementById('card-year').innerText = item.year;
-            document.getElementById('card-age').innerText = `Age ${item.age}`;
-            
-            const lvlEl = document.getElementById('card-luck-level');
-            lvlEl.innerText = item.level;
-            lvlEl.className = item.levelClass; // Reset class
-            
+            document.getElementById('card-age').innerText = item.age + "岁";
             document.getElementById('card-score').innerText = item.score;
-            document.getElementById('score-bar').style.width = `${(item.score / 150) * 100}%`;
             
-            // Color the bar based on score trend
-            const isUp = parseFloat(item.values[1]) >= parseFloat(item.values[0]);
-            document.getElementById('score-bar').className = `h-2 rounded-full ${isUp ? 'bg-brand-accent' : 'bg-brand-danger'}`;
+            const badge = document.getElementById('card-luck-badge');
+            badge.innerText = item.status.label;
+            badge.style.backgroundColor = item.status.bg;
+            badge.style.borderColor = item.status.border;
+            badge.style.color = item.status.color;
 
-            document.getElementById('card-analysis').innerText = item.analysis;
-            
-            // Sectors
-            document.getElementById('card-sectors').innerHTML = `<span class="px-2 py-1 bg-purple-900/40 border border-purple-500/30 rounded text-xs text-purple-200 font-mono">${item.sector}</span>`;
-            
-            // Stocks
+            const isUp = parseFloat(item.values[1]) >= parseFloat(item.values[0]);
+            document.getElementById('card-trend-icon').innerHTML = isUp ? 
+                '<i class="fa-solid fa-arrow-trend-up text-brand-accent"></i>' : 
+                '<i class="fa-solid fa-arrow-trend-down text-brand-danger"></i>';
+
+            document.getElementById('txt-bazi').innerText = item.baziTxt;
+            document.getElementById('txt-astro').innerText = item.astroTxt;
+            document.getElementById('txt-synthesis').innerText = item.synthesis;
+
+            document.getElementById('advice-spring').innerText = item.seasons[0];
+            document.getElementById('advice-summer').innerText = item.seasons[1];
+            document.getElementById('advice-autumn').innerText = item.seasons[2];
+            document.getElementById('advice-winter').innerText = item.seasons[3];
+
+            const sectorsHtml = item.sectors.map(s => 
+                `<span class="px-2 py-1 bg-white border border-slate-200 rounded text-[10px] text-slate-600 font-bold font-mono shadow-sm">${s}</span>`
+            ).join('');
+            document.getElementById('card-sectors').innerHTML = sectorsHtml;
+
             const stocksHtml = item.stocks.map(s => 
-                `<span class="font-mono ${isUp ? 'text-brand-accent' : 'text-gray-400'} border border-white/10 px-2 py-1 rounded bg-black/30">${s}</span>`
+                `<li class="flex justify-between items-center border-b border-slate-100 pb-1 last:border-0 last:pb-0">
+                    <span class="text-slate-800 font-bold">${s.t}</span>
+                    <span class="text-slate-400 text-xs">${s.n}</span>
+                </li>`
             ).join('');
             document.getElementById('card-stocks').innerHTML = stocksHtml;
         }
 
-        // --- Event Listeners ---
-        document.getElementById('destiny-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // UI Loading State
-            const btnText = document.getElementById('btn-text');
-            const btnLoader = document.getElementById('btn-loader');
-            btnText.classList.add('hidden');
-            btnLoader.classList.remove('hidden');
-
-            // Simulate Calculation Delay
-            setTimeout(() => {
-                const dob = new Date(document.getElementById('dob').value);
-                const birthYear = dob.getFullYear();
-                
-                generatedData = generateDestinyData(birthYear);
-                
-                // Show Results
-                const resultContainer = document.getElementById('result-container');
-                resultContainer.classList.remove('hidden');
-                // Trigger reflow for transition
-                void resultContainer.offsetWidth; 
-                resultContainer.classList.remove('opacity-0');
-
-                initChart(generatedData);
-
-                // Scroll to results
-                resultContainer.scrollIntoView({ behavior: 'smooth' });
-
-                // Reset Button
-                btnText.classList.remove('hidden');
-                btnLoader.classList.add('hidden');
-            }, 1500);
-        });
-
-        // Resize Chart on Window Resize
-        window.addEventListener('resize', function() {
-            if(chartInstance) chartInstance.resize();
-        });
+        window.addEventListener('resize', () => { if(myChart) myChart.resize(); });
 
     </script>
 </body>
